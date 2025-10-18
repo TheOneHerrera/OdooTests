@@ -10,10 +10,7 @@ ENV PGPORT=5432
 
 # Usamos shell para que EXPANDAN las variables PG*
 # e indicamos addons-path por si usas extra-addons
-CMD ["bash","-lc","odoo \
-#la siguiente instruccion '-i base' solo hay que ejecutarla la primera vez o nos machacaremos
-#la bd con la instalacion inicial
--i base \
+CMD ["bash","-lc","odoo -i base \
   --db_host=\"$PGHOST\" \
   --db_port=\"${PGPORT}\" \
   --db_user=\"$PGUSER\" \
