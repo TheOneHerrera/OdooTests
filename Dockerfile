@@ -1,21 +1,30 @@
-# Imagen base oficial de Odoo 17 Community
+# Imagen base Odoo 17
 FROM odoo:17
 
-# Copiar (opcionalmente) módulos personalizados al contenedor
+# (Opcional) módulos propios
 COPY ./extra-addons /mnt/extra-addons
 
-# Exponer puerto estándar de Odoo
+# Puerto HTTP de Odoo
 EXPOSE 8069
 
-# Configurar el puerto de PostgreSQL (Render usa 5432 por defecto)
+# Puerto por defecto de PostgreSQL
 ENV PGPORT=5432
 
-# Comando de inicio normal de Odoo
-CMD ["bash", "-lc", "odoo \
-    --db_host=$PGHOST \
-    --db_port=$PGPORT \
-    --db_user=$PGUSER \
-    --db_password=$PGPASSWORD \
-    --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
-    --db-filter=.* \
-    --dev=all"]
+# 1) Inicializa la BD indicada en $PGDATABASE si está vacía (stop-after-init)
+# 2) Después arranca el servidor normalmente
+#
+# NOTA: usamos $PGDATABASE para que la inicialización vaya contra esa BD
+# y --db-filter la fije para evitar que Odoo “coja” otra por error.
+CMD ["bash","-lc", "\
+  echo '==> Checking/initializing DB $PGDATABASE' && \
+  odoo -d $PGDATABASE -i base --without-demo=all \
+       --db_host=$PGHOST --db_port=$PGPORT \
+       --db_user=$PGUSER --db_password=$PGPASSWORD \
+       --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+       --stop-after-init || true; \
+  echo '==> Starting Odoo server' && \
+  odoo --db_host=$PGHOST --db_port=$PGPORT \
+       --db_user=$PGUSER --db_password=$PGPASSWORD \
+       --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+       --db-filter=$PGDATABASE \
+       --dev=all"]
