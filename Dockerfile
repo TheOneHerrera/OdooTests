@@ -13,4 +13,5 @@ COPY ./extra-addons /mnt/extra-addons
 EXPOSE 8069
 
 # Comando de inicio
-CMD ["odoo", "-d", "odoo_db", "--db_host=db", "--db_user=odoo", "--db_password=odoo", "--db_port=5432"]
+CMD ["odoo", "--db-filter=.*", "--dev=all"]
+
