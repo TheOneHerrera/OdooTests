@@ -10,13 +10,6 @@ ENV PGPORT=5432
 
 # Usamos shell para que EXPANDAN las variables PG*
 # e indicamos addons-path por si usas extra-addons
-CMD ["bash","-lc","odoo -i base \
-  --db_host=\"$PGHOST\" \
-  --db_port=\"${PGPORT}\" \
-  --db_user=\"$PGUSER\" \
-  --db_password=\"$PGPASSWORD\" \
-  --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
-  --db-filter=.* \
-  --dev=all"]
+CMD ["odoo", "--db_host=$PGHOST", "--db_port=$PGPORT", "--db_user=$PGUSER", "--db_password=$PGPASSWORD", "--addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons", "--db-filter=.*", "--dev=all"]
 
 
